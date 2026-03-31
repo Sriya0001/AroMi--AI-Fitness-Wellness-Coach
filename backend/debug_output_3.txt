@@ -1,0 +1,5 @@
+﻿--- Testing Workout Plan Generation ---
+SUCCESS: Workout Plan generated: 7 days
+
+--- Testing Nutrition Plan Generation ---
+SUCCESS: Nutrition Plan generated: 7 days
