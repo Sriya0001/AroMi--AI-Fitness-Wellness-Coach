@@ -1,5 +1,0 @@
-﻿--- Testing Workout Plan Generation ---
-SUCCESS: Workout Plan generated: 7 days
-
---- Testing Nutrition Plan Generation ---
-FAILED Nutrition Gen: ValueError: Invalid format specifier ' "oats", "quantity": "500g"' for object of type 'str'

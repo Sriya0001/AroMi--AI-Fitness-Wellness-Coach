@@ -6,3 +6,7 @@ __pycache__/
 node_modules/
 dist/
 build/
+backend/*.db
+backend/*.txt
+backend/.cache
+*.log
