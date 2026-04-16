@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, CheckCircle, ChevronDown, ChevronUp, Youtube, Timer, Flame, Trophy, Heart } from 'lucide-react'
 import Navbar from '../components/Navbar'
-import SpotifyPlayer from '../components/SpotifyPlayer'
 import { workoutAPI, progressAPI, authAPI, favouriteAPI } from '../services/api'
 import { useNavigate, useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
@@ -79,8 +78,6 @@ export default function WorkoutPage() {
 
     useEffect(() => {
         const params = new URLSearchParams(location.search)
-        const spotifyStatus = params.get('spotify')
-        const detail = params.get('detail')
         const dayParam = params.get('day')
 
         if (dayParam) {
@@ -88,24 +85,7 @@ export default function WorkoutPage() {
             const found = plan.find(p => p.day_name === dayParam);
             if (found) setSelectedDay(found.day);
         }
-
-        if (spotifyStatus === 'success') {
-            authAPI.getMe().then(r => {
-                setUser(r.data)
-                toast.success('Spotify connected successfully! 🎶')
-                window.history.replaceState({}, document.title, window.location.pathname)
-            }).catch(() => {
-                toast.error('Failed to sync Spotify status')
-            })
-        } else if (spotifyStatus === 'error') {
-            const errorMsg = detail === 'token_fail' ? 'Failed to get access token from Spotify' :
-                detail === 'user_not_found' ? 'User session not found' :
-                    detail === 'exception' ? 'An unexpected error occurred during connection' :
-                        `Connection error: ${detail || 'unknown'}`
-            toast.error(`Spotify Connection Failed: ${errorMsg}`)
-            window.history.replaceState({}, document.title, window.location.pathname)
-        }
-    }, [location, setUser, plan])
+    }, [location, plan])
 
     const todayPlan = plan.find(p => p.day === selectedDay)
 
@@ -339,8 +319,6 @@ export default function WorkoutPage() {
 
                                 {/* Sidebar */}
                                 <div className="space-y-6">
-                                    {/* Spotify Player */}
-                                    <SpotifyPlayer workoutFocus={todayPlan.focus} />
 
                                     {/* Stats */}
                                     <div className="glass-card p-5">

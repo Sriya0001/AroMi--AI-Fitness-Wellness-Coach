@@ -30,7 +30,6 @@ class User(Base):
     medications = Column(Text, nullable=True)
     calendar_sync = Column(String(10), default="no")
     google_token_data = Column(Text, nullable=True) # Stores JSON of credentials
-    spotify_token_data = Column(Text, nullable=True) # Stores JSON of Spotify tokens
     assessment_completed = Column(String(10), default="no")
 
     created_at = Column(DateTime, default=datetime.utcnow)

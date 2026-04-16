@@ -15,9 +15,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/calendar/callback"
 
-    SPOTIFY_CLIENT_ID: str = ""
-    SPOTIFY_CLIENT_SECRET: str = ""
-    SPOTIFY_REDIRECT_URI: str = "http://localhost:8000/spotify/callback"
+
 
     DATABASE_URL: str = "sqlite:///./arogyamitra.db"
     FRONTEND_URL: str = "http://localhost:5173"

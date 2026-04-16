@@ -60,7 +60,6 @@ class UserResponse(BaseModel):
     calendar_sync: Optional[str]
     assessment_completed: Optional[str]
     google_token_data: Optional[str]
-    spotify_token_data: Optional[str]
     created_at: datetime
 
     class Config:

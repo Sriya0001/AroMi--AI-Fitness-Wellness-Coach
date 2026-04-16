@@ -2,7 +2,7 @@ from fastapi import FastAPI # Re-triggering reload
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import Base, engine
 from app.core.config import settings
-from app.routers import auth, users, workout, nutrition, progress, ai, calendar, spotify, reviews, favourites
+from app.routers import auth, users, workout, nutrition, progress, ai, calendar, reviews, favourites
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -39,7 +39,6 @@ app.include_router(nutrition.router)
 app.include_router(progress.router)
 app.include_router(ai.router)
 app.include_router(calendar.router)
-app.include_router(spotify.router)
 app.include_router(reviews.router)
 app.include_router(favourites.router)
 

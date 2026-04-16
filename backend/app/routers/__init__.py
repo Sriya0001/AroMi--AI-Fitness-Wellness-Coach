@@ -1,1 +1,1 @@
-from . import auth, users, workout, nutrition, progress, ai, calendar, reviews, spotify, favourites
+from . import auth, users, workout, nutrition, progress, ai, calendar, reviews, favourites
