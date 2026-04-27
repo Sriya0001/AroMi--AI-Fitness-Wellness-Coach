@@ -1,23 +1,22 @@
-# 🧠 AroMi – AI Fitness & Wellness Coach
+# AroMi – AI Fitness & Wellness Coach
 
 An AI-powered fitness and wellness platform that generates **personalized workout and nutrition plans** based on user data, goals, and progress.
 
 ---
 
-## 🚀 Features
+## Features
 
-- 🤖 AI-powered adaptive coaching using LLaMA (Groq)
-- 🏋️ Personalized workout plans based on fitness level & goals
-- 🥗 Smart nutrition planning with Spoonacular API integration
-- 📅 Calendar-based scheduling for workouts and meals
-- 📊 Progress tracking with dynamic dashboards
-- 🔐 Secure authentication using JWT
-- 🎧 Spotify integration for workout playlists
-- 🎥 YouTube integration for guided exercises
+-  AI-powered adaptive coaching using LLaMA (Groq)
+-  Personalized workout plans based on fitness level & goals
+-  Smart nutrition planning with Spoonacular API integration
+-  Calendar-based scheduling for workouts and meals
+-  Progress tracking with dynamic dashboards
+-  Secure authentication using JWT
+-  YouTube integration for guided exercises
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 - FastAPI
@@ -34,7 +33,7 @@ An AI-powered fitness and wellness platform that generates **personalized workou
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### Backend
 ```bash
