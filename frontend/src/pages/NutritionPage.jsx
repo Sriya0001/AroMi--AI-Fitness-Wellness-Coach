@@ -161,11 +161,37 @@ export default function NutritionPage() {
                                                             {expandedMeal === mealType ? <ChevronUp size={16} className="text-slate-500" /> : <ChevronDown size={16} className="text-slate-500" />}
                                                         </div>
                                                     </div>
-                                                    {expandedMeal === mealType && meal.ingredients && (
-                                                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="mt-3 pt-3 border-t border-slate-700 space-y-2">
-                                                            {meal.ingredients && <p className="text-slate-400 text-sm">🛒 {meal.ingredients.join(', ')}</p>}
-                                                            {meal.prep_time && <p className="text-slate-500 text-xs">⏱ Prep time: {meal.prep_time}</p>}
-                                                            {meal.recipe_hint && <p className="text-slate-400 text-sm italic">{meal.recipe_hint}</p>}
+                                                    {expandedMeal === mealType && typeof meal === 'object' && (
+                                                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="mt-3 pt-3 border-t border-slate-700 space-y-4">
+                                                            {meal.spoonacular && (
+                                                                <div className="flex flex-col sm:flex-row gap-4 bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
+                                                                    {meal.spoonacular.recipe_image && (
+                                                                        <img src={meal.spoonacular.recipe_image} alt="Recipe" className="w-full sm:w-24 sm:h-24 object-cover rounded-lg shadow-md" />
+                                                                    )}
+                                                                    <div className="flex-1">
+                                                                        <p className="text-white font-medium mb-1">
+                                                                            {meal.spoonacular.recipe_title || 'Verified Recipe'} 
+                                                                            {meal.spoonacular.recipe_url && (
+                                                                                <a href={meal.spoonacular.recipe_url} target="_blank" rel="noreferrer" className="text-purple-400 ml-2 text-xs inline-flex items-center gap-1 hover:text-purple-300 transition-colors">
+                                                                                    <ExternalLink size={12} /> View Full Recipe
+                                                                                </a>
+                                                                            )}
+                                                                        </p>
+                                                                        <div className="flex flex-wrap gap-3 text-xs text-slate-400 mb-2">
+                                                                            {meal.spoonacular.ready_in_minutes && <span className="bg-slate-800 px-2 py-1 rounded-md">⏱ {meal.spoonacular.ready_in_minutes} mins</span>}
+                                                                            {meal.spoonacular.spoonacular_calories && <span className="bg-orange-500/10 text-orange-400 px-2 py-1 rounded-md">🔥 {meal.spoonacular.spoonacular_calories} kcal</span>}
+                                                                            {meal.spoonacular.spoonacular_protein && <span className="bg-purple-500/10 text-purple-400 px-2 py-1 rounded-md">💪 {meal.spoonacular.spoonacular_protein}g protein</span>}
+                                                                        </div>
+                                                                        <p className="text-xs text-green-400 flex items-center gap-1">✨ Powered by Spoonacular</p>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            
+                                                            <div className="space-y-2 pl-1">
+                                                                {meal.ingredients && <p className="text-slate-300 text-sm">🛒 <b>Ingredients:</b> {meal.ingredients.join(', ')}</p>}
+                                                                {meal.prep_time && !meal.spoonacular?.ready_in_minutes && <p className="text-slate-500 text-xs">⏱ Prep time: {meal.prep_time}</p>}
+                                                                {meal.recipe_hint && <p className="text-slate-400 text-sm italic">{meal.recipe_hint}</p>}
+                                                            </div>
                                                         </motion.div>
                                                     )}
                                                 </motion.div>

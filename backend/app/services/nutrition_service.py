@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.nutrition import NutritionPlan
 from app.services.ai_service import generate_plan_with_groq
 from app.ai.prompts import get_nutrition_prompt
+from app.services.spoonacular_service import enrich_meal
 
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -24,12 +25,22 @@ async def generate_meal_plan(user_profile: dict, db: Session, user_id: int) -> l
         saved_plans = []
         for day_data in days_data:
             grocery = day_data.get("grocery_list", [])
-            
+            meals = day_data.get("meals", {})
+
+            # Enrich each meal with Spoonacular recipe data (image, URL, macros)
+            enriched_meals = {}
+            for meal_type, meal_data in meals.items():
+                if isinstance(meal_data, dict):
+                    enriched = await enrich_meal(meal_data)
+                    enriched_meals[meal_type] = enriched
+                else:
+                    enriched_meals[meal_type] = meal_data
+
             nutrition = NutritionPlan(
                 user_id=user_id,
                 day=day_data.get("day", 1),
                 day_name=day_data.get("day_name", DAYS[day_data.get("day", 1) - 1]),
-                meals=json.dumps(day_data.get("meals", {})),
+                meals=json.dumps(enriched_meals),
                 calories=day_data.get("calories", 2000),
                 protein=day_data.get("protein", 80),
                 carbs=day_data.get("carbs", 200),
@@ -41,7 +52,7 @@ async def generate_meal_plan(user_profile: dict, db: Session, user_id: int) -> l
             plan_dict = {
                 "day": nutrition.day,
                 "day_name": nutrition.day_name,
-                "meals": day_data.get("meals", {}),
+                "meals": enriched_meals,
                 "calories": nutrition.calories,
                 "protein": nutrition.protein,
                 "carbs": nutrition.carbs,

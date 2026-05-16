@@ -458,31 +458,25 @@ class LangChainAromi:
         self.user_profile = user_profile
 
     async def chat(self, user_message: str, chat_history: list) -> Tuple[str, bool]:
-        from groq import Groq
+        from langchain_groq import ChatGroq
+        from langchain.schema import SystemMessage, HumanMessage, AIMessage
         from app.core.config import settings
 
-        # Step 1: Try to execute a DB plan action, passing chat_history for context
+        # Step 1: Intent detection — executes DB actions if needed
         action_result, plan_modified = await detect_intent(user_message, self.db, self.user_id, chat_history)
 
-        # Step 2: Build conversation context
-        history_text = ""
+        # Step 2: Build LangChain message history from DB chat records
+        history_messages = []
         for h in chat_history[-6:]:
-            history_text += f"User: {h['message']}\nAROMI: {h['response']}\n"
+            history_messages.append(HumanMessage(content=h["message"]))
+            history_messages.append(AIMessage(content=h["response"]))
 
-        user_context = (
-            f"User Profile: Age {self.user_profile.get('age', 'unknown')}, "
-            f"Goal: {self.user_profile.get('fitness_goal', 'general fitness')}, "
-            f"Level: {self.user_profile.get('fitness_level', 'beginner')}\n\n"
-            f"{history_text}"
-        )
-
-        # Step 3: Build system prompt
-        # CRITICAL: Only tell AI a change happened if one actually happened
+        # Step 3: Build system prompt with action context
         if plan_modified and action_result:
             action_note = (
-                f"\n\n[SYSTEM: PLAN UPDATED] The following change was made to the user's plan in the database: "
-                f"{action_result}. This change has ALREADY been applied to their view automatically. "
-                f"Confirm the specific change to the user and mention that their dashboard has been updated."
+                f"\n\n[SYSTEM: PLAN UPDATED] The following change was made to the user's plan: "
+                f"{action_result}. This change has ALREADY been applied. "
+                f"Confirm the specific change to the user and mention their dashboard has been updated."
             )
         else:
             action_note = (
@@ -490,20 +484,30 @@ class LangChainAromi:
                 "Only answer the user's question conversationally."
             )
 
-        system_prompt = AROMI_SYSTEM_PROMPT + action_note
+        system_content = AROMI_SYSTEM_PROMPT + action_note
 
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Context: {user_context}\n\nUser's message: {user_message}"}
-        ]
+        # Step 4: User profile context
+        user_context = (
+            f"User Profile: Age {self.user_profile.get('age', 'unknown')}, "
+            f"Goal: {self.user_profile.get('fitness_goal', 'general fitness')}, "
+            f"Level: {self.user_profile.get('fitness_level', 'beginner')}"
+        )
 
-        # Step 4: Get AI response
-        client = Groq(api_key=settings.GROQ_API_KEY)
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
+        # Step 5: Assemble full message chain using LangChain schema
+        messages = (
+            [SystemMessage(content=system_content)]
+            + history_messages
+            + [HumanMessage(content=f"Context: {user_context}\n\nUser's message: {user_message}")]
+        )
+
+        # Step 6: Invoke via LangChain ChatGroq
+        llm = ChatGroq(
+            api_key=settings.GROQ_API_KEY,
+            model_name="llama-3.3-70b-versatile",
             temperature=0.4,
             max_tokens=512,
         )
+        response = llm.invoke(messages)
 
-        return completion.choices[0].message.content, plan_modified
+        return response.content, plan_modified
+

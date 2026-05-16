@@ -16,3 +16,5 @@ pydantic-settings==2.2.1
 alembic==1.13.1
 aiosqlite==0.20.0
 email-validator>=2.0.0
+langchain>=0.1.20
+langchain-groq>=0.1.3
